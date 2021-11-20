@@ -36,25 +36,25 @@ router.post('/log/', validateJWT, async (req, res) =>{
 =================================
 */
 //get all user logs by id check
-router.get('/log/', validateJWT, async (req, res) =>{
-    const {id} = req.user;
+// router.get('/log/', validateJWT, async (req, res) =>{
+//     const {id} = req.user;
     
-    try {
+//     try {
         
-        const userLogs = await workoutlog.findAll({
-            where:{
-                owner_id: id
-            }
-        });
-        res.status(200).json(userLogs);
-    } catch (err) {
-        res.status(500).json({error: err});
-    }
-});
+//         const userLogs = await workoutlog.findAll({
+//             where:{
+//                 owner_id: id
+//             }
+//         });
+//         res.status(200).json(userLogs);
+//     } catch (err) {
+//         res.status(500).json({error: err});
+//     }
+// });
 //get log by id check
-router.get('/log/:id', validateJWT, async (req, res) =>{
+router.get('/log/', validateJWT, async (req, res) =>{
     const {id:owner_id} = req.user;
-    const {id} = req.params;
+    const id = req.params;
     // console.log(req.user.id)
     try {
         const userLog = await workoutlog.findAll({
@@ -75,14 +75,16 @@ router.get('/log/:id', validateJWT, async (req, res) =>{
 */
 router.put('/log/:id', validateJWT, async (req, res) =>{
     const {description, definition, result} = req.body.workoutlog;
-    const {id:user_id} = req.user;
-    const {id:log_id} = req.params;
-    
+    // const {id:user_id} = req.user;
+    // const {id:log_id} = req.params; CORRECT SYNTAX BELOW TO REPLACE THIS
+    const userID = req.user.id;
+    const logID = req.params.id;
+    console.log(userID);
 
     const query = {
         where:{
-            id: log_id,
-            owner_id: user_id
+            id: logID,
+            owner_id: userID
         }
     };
 
@@ -106,13 +108,13 @@ router.put('/log/:id', validateJWT, async (req, res) =>{
 ============================
 */
 router.delete('/log/:id', validateJWT, async (req, res) =>{
-    const {id:user_id} = req.user;
-    const {id:log_id} = req.params;
+    const userID = req.user.id;
+    const logID = req.params.id;
     try {
         const query = {
             where: {
-                id: log_id,
-                owner_id: user_id
+                id: logID,
+                owner_id: userID
             }
         };
         await workoutlog.destroy(query);
